@@ -1,0 +1,11 @@
+# Big!
+node_modules/
+
+# Desktop configuration files.
+.DS_Store
+desktop.ini
+
+# Logs.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,36 @@
+{
+  "name": "@ap0nia/sveltekit-adapter-node",
+  "version": "0.1.0",
+  "description": "Adapter for SvelteKit apps that generates a standalone Node server",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ap0nia/sveltekit-adapter-node"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "index.d.ts",
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@polka/url": "^0.5.0",
+    "polka": "^0.5.2",
+    "sirv": "^2.0.3"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^1.21.0",
+    "esbuild": "^0.18.11",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "peerDependencies": {
+    "@sveltejs/kit": "^1.0.0"
+  }
+}
