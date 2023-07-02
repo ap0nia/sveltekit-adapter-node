@@ -9,7 +9,7 @@ export const port = env('PORT', !path && '3000');
 const server = polka().use(handler);
 
 server.listen({ path, host, port }, () => {
-  console.log(`Listening on ${path ? path : host + ':' + port}`);
+  console.log(`🚀 Listening on ${path ? path : host + ':' + port}`);
 });
 
 export { server };

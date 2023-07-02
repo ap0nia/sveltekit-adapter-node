@@ -26,3 +26,19 @@ declare namespace App {
     req: import('http').IncomingMessage;
   }
 }
+
+declare module 'net' {
+  interface Socket {
+    socket: Omit<Socket, 'socket'>
+  }
+}
+
+declare module 'http' {
+  interface IncomingMessage {
+    info: import('node:net').Socket
+  }
+}
+
+interface RequestInit {
+  duplex?: string
+}

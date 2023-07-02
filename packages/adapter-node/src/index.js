@@ -23,7 +23,7 @@ function createAdapter(opts = {}) {
   const { outdir = 'build', precompress, envPrefix = '', polyfill = true } = opts;
 
   const adapter = {
-    name: '@sveltejs/adapter-node',
+    name: '@ap0nia/sveltekit-adapter-node',
 
     /** 
      * @param {import('@sveltejs/kit').Builder} builder
