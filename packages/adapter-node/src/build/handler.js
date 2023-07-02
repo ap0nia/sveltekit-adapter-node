@@ -5,8 +5,9 @@ import { manifest } from 'MANIFEST';
 import url from 'node:url';
 import path from 'node:path';
 import { env } from './env.js'
-import { createSsr } from '../ssr.js'
-import { serve, serve_prerendered } from '../static.js'
+import { serve } from './routing/static.js'
+import { createSsr } from './routing/ssr.js'
+import { serve_prerendered } from './routing/prerendered.js'
 
 /**
  * The directory where all these files are located together.

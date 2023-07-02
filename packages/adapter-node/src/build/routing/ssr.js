@@ -1,6 +1,6 @@
-import { ENV_PREFIX } from './templates/env.js';
-import { getRequest } from './request.js'
-import { setResponse } from './response.js'
+import { ENV_PREFIX } from '../env.js';
+import { getRequest } from '../http/request.js'
+import { setResponse } from '../http/response.js'
 
 /**
  * @param {import('@sveltejs/kit').Server} server

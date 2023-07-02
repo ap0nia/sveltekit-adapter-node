@@ -80,8 +80,8 @@ function createAdapter(opts = {}) {
 
       await esbuild.build({
         entryPoints: {
-          index: path.join(__dirname, 'templates', 'index.js'),
-          handler: path.join(__dirname, 'templates', 'handler.js'),
+          index: path.join(__dirname, 'build', 'index.js'),
+          handler: path.join(__dirname, 'build', 'handler.js'),
         },
         bundle: true,
         platform: 'node',
