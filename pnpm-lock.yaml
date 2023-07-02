@@ -4,30 +4,38 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  '@polka/url':
-    specifier: ^1.0.0-next.21
-    version: 1.0.0-next.21
-  polka:
-    specifier: ^1.0.0-next.22
-    version: 1.0.0-next.22
-  sirv:
-    specifier: ^2.0.3
-    version: 2.0.3
+importers:
 
-devDependencies:
-  '@sveltejs/kit':
-    specifier: ^1.21.0
-    version: 1.21.0(svelte@4.0.1)(vite@4.3.9)
-  esbuild:
-    specifier: ^0.18.11
-    version: 0.18.11
-  tsx:
-    specifier: ^3.12.7
-    version: 3.12.7
-  typescript:
-    specifier: ^5.1.6
-    version: 5.1.6
+  .:
+    devDependencies:
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/adapter-node:
+    dependencies:
+      '@polka/url':
+        specifier: ^1.0.0-next.21
+        version: 1.0.0-next.21
+      polka:
+        specifier: ^1.0.0-next.22
+        version: 1.0.0-next.22
+      sirv:
+        specifier: ^2.0.3
+        version: 2.0.3
+    devDependencies:
+      '@sveltejs/kit':
+        specifier: ^1.21.0
+        version: 1.21.0(svelte@4.0.1)(vite@4.3.9)
+      esbuild:
+        specifier: ^0.18.11
+        version: 0.18.11
+      tsx:
+        specifier: ^3.12.7
+        version: 3.12.7
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
 
 packages:
 
