@@ -48,6 +48,40 @@ importers:
         specifier: ^4.3.6
         version: 4.3.9(@types/node@20.3.3)
 
+  packages/adapter-lambda:
+    dependencies:
+      '@polka/url':
+        specifier: ^1.0.0-next.21
+        version: 1.0.0-next.21
+      polka:
+        specifier: ^1.0.0-next.22
+        version: 1.0.0-next.22
+      set-cookie-parser:
+        specifier: ^2.6.0
+        version: 2.6.0
+      sirv:
+        specifier: ^2.0.3
+        version: 2.0.3
+    devDependencies:
+      '@sveltejs/kit':
+        specifier: ^1.21.0
+        version: 1.21.0(svelte@4.0.1)(vite@4.3.9)
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/set-cookie-parser':
+        specifier: ^2.4.2
+        version: 2.4.2
+      esbuild:
+        specifier: ^0.18.11
+        version: 0.18.11
+      tsx:
+        specifier: ^3.12.7
+        version: 3.12.7
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
   packages/adapter-node:
     dependencies:
       '@polka/url':
