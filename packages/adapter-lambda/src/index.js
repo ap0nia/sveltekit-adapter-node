@@ -23,7 +23,7 @@ function createAdapter(opts = {}) {
   const { outdir = 'build', precompress, envPrefix = '', polyfill = true } = opts;
 
   const adapter = {
-    name: '@ap0nia/sveltekit-adapter-node',
+    name: '@ap0nia/sveltekit-adapter-lambda',
 
     /** 
      * @param {import('@sveltejs/kit').Builder} builder
@@ -81,7 +81,6 @@ function createAdapter(opts = {}) {
       await esbuild.build({
         entryPoints: {
           index: path.join(__dirname, 'build', 'index.js'),
-          handler: path.join(__dirname, 'build', 'handler.js'),
         },
         bundle: true,
         platform: 'node',
