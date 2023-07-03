@@ -30,9 +30,22 @@ function createAdapter(opts = {}) {
      */
     async adapt(builder) {
       /**
+       * Temporary directory is created in the default SvelteKit outputs directory.
        * @example .svelte-kit/output/server/adapter-node
        */
       const temporaryDirectory = path.join(builder.getServerDirectory(), 'adapter-node');
+
+      /**
+       * Components pre-rendered as HTML files.
+       * @example build/prerendered
+       */
+      const prerenderedDirectory = path.join(outdir, 'prerendered', builder.config.kit.paths.base)
+
+      /**
+       * JS files referenced by the pre-rendered HTML files.
+       * @example build/client
+       */
+      const clientDirectory = path.join(outdir, 'client', builder.config.kit.paths.base)
 
       /**
        * Some SvelteKit thing that determines internal routing.
@@ -54,15 +67,15 @@ function createAdapter(opts = {}) {
 
       builder.log.minor('Copying assets');
 
-      builder.writeClient(`${outdir}/client/${builder.config.kit.paths.base}`);
-      builder.writePrerendered(`${outdir}/prerendered/${builder.config.kit.paths.base}`);
+      builder.writeClient(clientDirectory);
+      builder.writePrerendered(prerenderedDirectory);
 
 
       if (precompress) {
         builder.log.minor('Compressing assets');
         await Promise.all([
-          builder.compress(`${outdir}/client`),
-          builder.compress(`${outdir}/prerendered`)
+          builder.compress(clientDirectory),
+          builder.compress(prerenderedDirectory)
         ]);
       }
 
@@ -129,6 +142,7 @@ function createAdapter(opts = {}) {
       })
     }
   };
+
   return adapter
 }
 

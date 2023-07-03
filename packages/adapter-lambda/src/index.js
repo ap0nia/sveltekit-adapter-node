@@ -18,7 +18,9 @@ const require = topLevelModule.createRequire(import.meta.url);
  */
 const namespace = 'sveltekit-virtual';
 
-/** @type {import('.').default} */
+/** 
+ * @type {import('.').default} 
+ */
 function createAdapter(opts = {}) {
   const { outdir = 'build', precompress, envPrefix = '', polyfill = true } = opts;
 
@@ -26,13 +28,26 @@ function createAdapter(opts = {}) {
     name: '@ap0nia/sveltekit-adapter-lambda',
 
     /** 
-     * @param {import('@sveltejs/kit').Builder} builder
+     * @type {import('@sveltejs/kit').Builder} builder
      */
     async adapt(builder) {
       /**
+       * Temporary directory is created in the default SvelteKit outputs directory.
        * @example .svelte-kit/output/server/adapter-node
        */
       const temporaryDirectory = path.join(builder.getServerDirectory(), 'adapter-node');
+
+      /**
+       * Components pre-rendered as HTML files.
+       * @example build
+       */
+      const prerenderedDirectory = path.join(outdir, builder.config.kit.paths.base)
+
+      /**
+       * JS files referenced by the pre-rendered HTML files.
+       * @example build
+       */
+      const clientDirectory = path.join(outdir, builder.config.kit.paths.base)
 
       /**
        * Some SvelteKit thing that determines internal routing.
@@ -51,18 +66,16 @@ function createAdapter(opts = {}) {
       builder.rimraf(temporaryDirectory);
       builder.mkdirp(temporaryDirectory);
 
-
       builder.log.minor('Copying assets');
 
-      builder.writeClient(`${outdir}/client/${builder.config.kit.paths.base}`);
-      builder.writePrerendered(`${outdir}/prerendered/${builder.config.kit.paths.base}`);
-
+      builder.writeClient(clientDirectory);
+      builder.writePrerendered(prerenderedDirectory);
 
       if (precompress) {
         builder.log.minor('Compressing assets');
         await Promise.all([
-          builder.compress(`${outdir}/client`),
-          builder.compress(`${outdir}/prerendered`)
+          builder.compress(clientDirectory),
+          builder.compress(prerenderedDirectory)
         ]);
       }
 
@@ -128,6 +141,7 @@ function createAdapter(opts = {}) {
       })
     }
   };
+
   return adapter
 }
 
