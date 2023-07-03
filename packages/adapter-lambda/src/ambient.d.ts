@@ -21,9 +21,16 @@ interface ImportMeta {
 declare namespace App {
   export interface Platform {
     /**
-     * The original Node request object (https://nodejs.org/api/http.html#class-httpincomingmessage)
      */
-    req: import('http').IncomingMessage;
+    event: import('aws-lambda').APIGatewayProxyEvent
+
+    /**
+     */
+    context: import('aws-lambda').Context
+
+    /**
+     */
+    callback: import('aws-lambda').Callback
   }
 }
 

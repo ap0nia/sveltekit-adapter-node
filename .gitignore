@@ -1,3 +1,7 @@
+# Build outputs.
+build/
+dist/
+
 # Big!
 node_modules/
 

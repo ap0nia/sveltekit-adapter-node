@@ -27,6 +27,7 @@ await server.init({ env: process.env });
 
 /** 
  * @param {import('polka').Middleware[]} handlers 
+ * @returns {import('polka').Middleware}
  */
 function sequence(handlers) {
   /** 
