@@ -1,6 +1,7 @@
 // import adapter from '@sveltejs/adapter-node'
-// import adapter from '@ap0nia/sveltekit-adapter-node'
-import adapter from '@ap0nia/sveltekit-adapter-lambda'
+// import adapter from '@sveltejs/adapter-static'
+import adapter from '@ap0nia/sveltekit-adapter-node'
+// import adapter from '@ap0nia/sveltekit-adapter-lambda'
 import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */

@@ -32,6 +32,7 @@
     "@types/aws-lambda": "^8.10.119",
     "@types/node": "^20.3.3",
     "@types/set-cookie-parser": "^2.4.2",
+    "defu": "^6.1.2",
     "esbuild": "^0.18.11",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"

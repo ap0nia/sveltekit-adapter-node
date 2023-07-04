@@ -1,11 +1,13 @@
 import fs from 'node:fs'
 import url from 'node:url'
 import path from 'node:path'
+import { defu } from 'defu'
 import esbuild from 'esbuild'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 /**
+ * Custom banner to support `dynamic require of ...`
  * @see https://github.com/evanw/esbuild/issues/1921#issuecomment-1491470829
  */
 const js = `\
@@ -13,22 +15,44 @@ import topLevelModule from 'node:module';
 const require = topLevelModule.createRequire(import.meta.url);
 `;
 
+const defaultS3Directory = 's3'
+
+const defaultLambdaDirectory = 'lambda'
+
 /**
  * Custom namespace for resolving virtual files.
  */
 const namespace = 'sveltekit-virtual';
 
+/**
+ * @type {import('.').AdapterOptions}
+ */
+const defaultOptions = {
+  precompress: false,
+  out: 'build',
+  polyfill: true,
+  envPrefix: '',
+  s3Directory: defaultS3Directory,
+  lambdaDirectory: defaultLambdaDirectory,
+}
+
 /** 
  * @type {import('.').default} 
  */
-function createAdapter(opts = {}) {
-  const { outdir = 'build', precompress, envPrefix = '', polyfill = true } = opts;
+function createAdapter(options = {}) {
+  const optionsWithDefaults = defu(options, defaultOptions)
+  const { precompress, out, polyfill } = optionsWithDefaults
 
+  /**
+   * @type {import('.').ExtendedAdapter}
+   */
   const adapter = {
+    ...optionsWithDefaults,
+
     name: '@ap0nia/sveltekit-adapter-lambda',
 
     /** 
-     * @type {import('@sveltejs/kit').Builder} builder
+     * @param {import('@sveltejs/kit').Builder} builder
      */
     async adapt(builder) {
       /**
@@ -36,18 +60,6 @@ function createAdapter(opts = {}) {
        * @example .svelte-kit/output/server/adapter-node
        */
       const temporaryDirectory = path.join(builder.getServerDirectory(), 'adapter-node');
-
-      /**
-       * Components pre-rendered as HTML files.
-       * @example build
-       */
-      const prerenderedDirectory = path.join(outdir, builder.config.kit.paths.base)
-
-      /**
-       * JS files referenced by the pre-rendered HTML files.
-       * @example build
-       */
-      const clientDirectory = path.join(outdir, builder.config.kit.paths.base)
 
       /**
        * Some SvelteKit thing that determines internal routing.
@@ -59,26 +71,38 @@ function createAdapter(opts = {}) {
        */
       const server = `${temporaryDirectory}/index.js`;
 
-      builder.log.minor(`Cleaning ${outdir} and ${temporaryDirectory}`);
+      /**
+       * - Components pre-rendered as HTML files.
+       * - JS files referenced by the pre-rendered HTML files.
+       * @example build/s3
+       */
+      const staticDirectory = path.join(out, defaultS3Directory, builder.config.kit.paths.base)
 
-      builder.rimraf(outdir);
-      builder.mkdirp(outdir);
+      /**
+       * Files needed to handle lambda events.
+       * @example build/lambda
+       */
+      const serverDirectory = path.join(out, defaultLambdaDirectory, builder.config.kit.paths.base)
+
+      builder.log.minor(`Cleaning ${out} and ${temporaryDirectory}`);
+
+      builder.rimraf(out);
+      builder.mkdirp(out);
       builder.rimraf(temporaryDirectory);
       builder.mkdirp(temporaryDirectory);
 
       builder.log.minor('Copying assets');
 
-      builder.writeClient(clientDirectory);
-      builder.writePrerendered(prerenderedDirectory);
+      builder.writeClient(staticDirectory);
+      builder.writePrerendered(staticDirectory);
 
       if (precompress) {
         builder.log.minor('Compressing assets');
         await Promise.all([
-          builder.compress(clientDirectory),
-          builder.compress(prerenderedDirectory)
+          builder.compress(staticDirectory),
+          builder.compress(staticDirectory)
         ]);
       }
-
 
       builder.log.minor('Building server');
 
@@ -96,14 +120,10 @@ function createAdapter(opts = {}) {
           index: path.join(__dirname, 'build', 'index.js'),
         },
         bundle: true,
-        platform: 'node',
         format: 'esm',
-        outdir,
+        platform: 'node',
+        outdir: path.join(serverDirectory),
         banner: { js },
-        define: {
-          'import.meta.SERVER_DIR': JSON.stringify(url.pathToFileURL(outdir)),
-          'import.meta.ENV_PREFIX': JSON.stringify(envPrefix)
-        },
         plugins: [
           {
             name: 'sveltekit-adapter-node-resolver',

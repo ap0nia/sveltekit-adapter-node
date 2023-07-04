@@ -2,6 +2,8 @@
 	import Counter from './Counter.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
+
+        export let data
 </script>
 
 <svelte:head>
@@ -12,6 +14,7 @@
 <section>
 	<h1>
 		<span class="welcome">
+      {data.number}
 			<picture>
 				<source srcset={welcome} type="image/webp" />
 				<img src={welcome_fallback} alt="Welcome" />
