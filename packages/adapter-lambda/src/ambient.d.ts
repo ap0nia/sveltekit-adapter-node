@@ -6,7 +6,19 @@ declare module 'MANIFEST' {
   import { SSRManifest } from '@sveltejs/kit';
 
   export const manifest: SSRManifest;
+
   export const prerendered: Set<string>;
+
+  /**
+   * Maps all possible route variants to the corresponding file.
+   * @example
+   * "" -> "index.html"
+   * "/" -> "index.html"
+   * "sverdle/how-to-play" -> "sverdle/how-to-play.html"
+   * "/sverdle/how-to-play" -> "sverdle/how-to-play.html"
+   * "/sverdle/how-to-play/" -> "sverdle/how-to-play.html"
+   */
+  export const prerenderedCandidates: Map<string, string>
 }
 
 declare module 'SERVER' {
