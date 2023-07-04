@@ -22,7 +22,7 @@ declare namespace App {
   export interface Platform {
     /**
      */
-    event: import('aws-lambda').APIGatewayProxyEvent
+    event: import('aws-lambda').APIGatewayProxyEvent | import('aws-lambda').APIGatewayProxyEventV2
 
     /**
      */
