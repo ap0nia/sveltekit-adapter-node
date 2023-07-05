@@ -1,8 +1,8 @@
 import 'SHIMS';
 import { Server } from 'SERVER';
-import { manifest, prerenderedCandidates } from 'MANIFEST';
+import { manifest } from 'MANIFEST';
+import { prerenderedMappings } from 'PRERENDERED'
 
-import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { methodsWithNoBody } from '../http/methods.js';
 import { isBinaryContentType } from '../http/binaryContentTypes.js';
@@ -30,7 +30,7 @@ export async function handler(event, context, callback) {
       ? convertAPIGatewayProxyEventV2ToRequest(event)
       : convertAPIGatewayProxyEventV1ToRequest(event)
 
-  const prerenderedFile = prerenderedCandidates.get(internalEvent.path);
+  const prerenderedFile = prerenderedMappings.get(internalEvent.path);
 
   /**
    * Pre-rendered routes are handled by both Lambda and Lambda@Edge.
@@ -43,7 +43,7 @@ export async function handler(event, context, callback) {
         "content-type": "text/html",
         "cache-control": "public, max-age=0, s-maxage=31536000, must-revalidate",
       },
-      body: readFileSync(join("prerendered", prerenderedFile), "utf8"),
+      body: readFileSync(prerenderedFile, "utf8"),
       isBase64Encoded: false,
     }
   }

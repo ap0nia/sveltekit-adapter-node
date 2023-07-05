@@ -8,7 +8,13 @@ declare module 'MANIFEST' {
   export const manifest: SSRManifest;
 
   export const prerendered: Set<string>;
+}
 
+declare module 'SERVER' {
+  export { Server } from '@sveltejs/kit';
+}
+
+declare module 'PRERENDERED' {
   /**
    * Maps all possible route variants to the corresponding file.
    * @example
@@ -18,11 +24,7 @@ declare module 'MANIFEST' {
    * "/sverdle/how-to-play" -> "sverdle/how-to-play.html"
    * "/sverdle/how-to-play/" -> "sverdle/how-to-play.html"
    */
-  export const prerenderedCandidates: Map<string, string>
-}
-
-declare module 'SERVER' {
-  export { Server } from '@sveltejs/kit';
+  export const prerenderedMappings: Map<string, string>
 }
 
 interface ImportMeta {

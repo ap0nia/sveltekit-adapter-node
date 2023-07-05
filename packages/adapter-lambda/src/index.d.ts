@@ -30,7 +30,7 @@ export interface AdapterOptions {
   lambdaDirectory: string;
 
   /**
-   * Subdirectory in the build directory to serve lambda files.
+   * Subdirectory in the build directory to serve CloudFront (function) files.
    */
   lambdaAtEdgeDirectory: string;
 }

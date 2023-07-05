@@ -107,8 +107,7 @@ function createAdapter(userOptions = {}) {
       fs.writeFileSync(
         manifest,
         `export const manifest = ${builder.generateManifest({ relativePath: './' })};\n\n` +
-        `export const prerendered = new Set(${JSON.stringify(builder.prerendered.paths)});\n` +
-        `export const prerenderedCandidates = new Map(${JSON.stringify(prerenderedCandidates)});\n`
+        `export const prerendered = new Set(${JSON.stringify(builder.prerendered.paths)});\n`
       );
 
       await esbuild.build({
@@ -146,12 +145,24 @@ function createAdapter(userOptions = {}) {
                 }
               })
 
+              build.onResolve({ filter: /PRERENDERED/ }, (args) => {
+                return {
+                  path: args.path,
+                  namespace
+                }
+              })
+
               build.onLoad({ filter: /SHIMS/, namespace }, () => {
                 return {
                   resolveDir: 'node_modules',
                   contents: options.polyfill
                     ? `import { installPolyfills } from '@sveltejs/kit/node/polyfills'; installPolyfills();`
                     : '',
+                }
+              })
+              build.onLoad({ filter: /PRERENDERED/, namespace }, () => {
+                return {
+                  contents: `export const prerenderedMappings = new Map(${JSON.stringify(prerenderedCandidates)});\n`
                 }
               })
             }
@@ -190,11 +201,15 @@ function createPrerenderedCandidates(prerenderedFiles) {
 
     if (file.endsWith(".html")) {
       candidates.push(
-        [`/${file}/`, file],
+        [file.replace(/\/index\.html$/, ''), file],
         [`${htmlFileNoExtension}/index`, file],
         [`${htmlFileNoExtension}/index.html`, file],
         [`/${htmlFileNoExtension}/index.html`, file],
       )
+    }
+
+    if (file === "index.html") {
+      candidates.push(["/", file], ["", file])
     }
 
     return candidates
