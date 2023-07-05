@@ -1,1 +1,1 @@
-export const methodsWithNoBody = new Set(['GET', 'HEAD', 'OPTIONS']);
+export const methodsForPrerenderedFiles = new Set(['GET', 'HEAD', 'OPTIONS']);

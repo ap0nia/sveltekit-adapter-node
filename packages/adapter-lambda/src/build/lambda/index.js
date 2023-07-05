@@ -4,8 +4,9 @@ import { manifest } from 'MANIFEST';
 import { prerenderedMappings } from 'PRERENDERED'
 
 import { readFileSync } from 'node:fs'
-import { methodsWithNoBody } from '../http/methods.js';
+import { methodsForPrerenderedFiles } from '../http/methods.js';
 import { isBinaryContentType } from '../http/binaryContentTypes.js';
+import { FORWARDED_HOST_HEADER, PRERENDERED_FILE_HEADERS } from '../http/headers.js'
 
 const server = new Server(manifest);
 
@@ -25,10 +26,9 @@ export async function handler(event, context, callback) {
 
   await initialized
 
-  const internalEvent =
-    'version' in event
-      ? convertAPIGatewayProxyEventV2ToRequest(event)
-      : convertAPIGatewayProxyEventV1ToRequest(event)
+  const internalEvent = isAPIGatewayProxyEventV2(event)
+    ? convertAPIGatewayProxyEventV2ToRequest(event)
+    : convertAPIGatewayProxyEventV1ToRequest(event)
 
   const prerenderedFile = prerenderedMappings.get(internalEvent.path);
 
@@ -39,18 +39,15 @@ export async function handler(event, context, callback) {
   if (prerenderedFile) {
     return {
       statusCode: 200,
-      headers: {
-        "content-type": "text/html",
-        "cache-control": "public, max-age=0, s-maxage=31536000, must-revalidate",
-      },
+      headers: PRERENDERED_FILE_HEADERS,
       body: readFileSync(prerenderedFile, "utf8"),
       isBase64Encoded: false,
     }
   }
 
   // Set correct host header
-  if (internalEvent.headers["x-forwarded-host"]) {
-    internalEvent.headers.host = internalEvent.headers["x-forwarded-host"];
+  if (internalEvent.headers[FORWARDED_HOST_HEADER]) {
+    internalEvent.headers.host = internalEvent.headers[FORWARDED_HOST_HEADER];
   }
 
   const requestUrl = `https://${internalEvent.headers.host}${internalEvent.url}`
@@ -61,7 +58,7 @@ export async function handler(event, context, callback) {
   const requestInit = {
     method: internalEvent.method,
     headers: internalEvent.headers,
-    body: methodsWithNoBody.has(internalEvent.method) ? undefined : internalEvent.body,
+    body: methodsForPrerenderedFiles.has(internalEvent.method) ? undefined : internalEvent.body,
   }
 
   // debug("request", requestUrl, requestInit);
@@ -79,9 +76,17 @@ export async function handler(event, context, callback) {
 
   // debug("response", response);
 
-  return 'version' in event
+  return isAPIGatewayProxyEventV2(event)
     ? convertResponseToAPIGatewayProxyResultV2(response)
     : convertResponseToAPIGatewayProxyResultV1(response)
+}
+
+/**
+ * @param {import('aws-lambda').APIGatewayProxyEvent | import('aws-lambda').APIGatewayProxyEventV2} event
+ * @returns {event is import('aws-lambda').APIGatewayProxyEventV2}
+ */
+function isAPIGatewayProxyEventV2(event) {
+  return 'version' in event;
 }
 
 /**
