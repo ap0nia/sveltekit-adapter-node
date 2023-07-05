@@ -28,6 +28,11 @@ export interface AdapterOptions {
    * Subdirectory in the build directory to serve lambda files.
    */
   lambdaDirectory: string;
+
+  /**
+   * Subdirectory in the build directory to serve lambda files.
+   */
+  lambdaAtEdgeDirectory: string;
 }
 
 /**
