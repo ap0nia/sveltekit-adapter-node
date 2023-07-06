@@ -118,6 +118,7 @@ function createAdapter(userOptions = {}) {
           [`${options.lambdaAtEdgeDirectory}/index`]: path.join(__dirname, 'build', 'lambda@edge', 'index.js'),
         },
         bundle: true,
+        outExtension: { '.js': '.mjs' },
         format: 'esm',
         platform: 'node',
         outdir: options.out,
