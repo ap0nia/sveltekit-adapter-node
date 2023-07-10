@@ -86,7 +86,7 @@ export async function handler(event, context, callback) {
  * @returns {event is import('aws-lambda').APIGatewayProxyEventV2}
  */
 function isAPIGatewayProxyEventV2(event) {
-  return 'version' in event;
+  return 'version' in event && event.version === '2.0';
 }
 
 /**
@@ -229,10 +229,16 @@ function normalizeAPIGatewayProxyEventHeaders(event) {
     }
   }
 
-  for (const [key, value] of Object.entries(event.headers)) {
-    if (value) {
-      headers[key.toLowerCase()] = value;
+  if (event.headers) {
+    for (const [key, value] of Object.entries(event.headers)) {
+      if (value) {
+        headers[key.toLowerCase()] = value;
+      }
     }
+  }
+
+  if (event.cookies) {
+    headers["cookie"] = event.cookies.join("; ");
   }
 
   return headers;
